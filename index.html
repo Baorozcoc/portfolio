@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./assets/profile.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <title>baorozcoc</title>
+</head>
+<body>
+    <div id="app" :class="{ dark: theme==='dark' }">
+        <header>
+            <button v-on:click="changeTheme()" id="theme-button" :class="{ dark: theme==='dark' }">
+                <img v-bind:src="theme==='dark'
+                    ?'./assets/icons/halfcircleblack.svg'
+                    :'./assets/icons/halfcirclewhite.svg' " alt="change theme icon"/>
+            </button>
+            <button v-on:click="changeLang()" id="lang-button" :class="{ spanish: isSpanish() }">
+                <img v-bind:src="isSpanish()
+                    ?'./assets/icons/eng.png'
+                    :'./assets/icons/esp.png' " alt="change language icon"/>
+            </button>
+        </header>
+        <section id="about-me" :class="{ dark: theme==='dark' }">
+            <h3>{{getText('iam')}}</h3>
+            <h1>Berny Alejandro Orozco Córdoba</h1>
+            <p>{{getText('description')}}</p>
+            <button v-on:click="downloadCV()" class="simple-btn" :class="{ dark: theme==='dark' }">{{getText('cvButton')}}</button>
+        </section>
+        <section id="knowledge">
+            <article id="technical">
+                <h2>{{getText('technicalTitle')}}</h2>
+                <div v-for="skill in technicalSkills" class="technical-card">
+                    <img v-if="skill[1]" v-bind:src="skill[1]" v-bind:alt="skill[0]"/>
+                    {{ skill[0] }}
+                </div>
+            </article>
+            <article id="education">
+                <h2>{{getText('educationTitle')}}</h2>
+                <ul>
+                    <li v-for="step in educationSteps" class="education-step">
+                        <h3>{{ isSpanish() ? step.title[0] : step.title[1] }}</h3>
+                        <p>{{ isSpanish() ? step.year[0] : step.year[1] }}</p>
+                        <p>{{step.place}}</p>
+                    </li> 
+                </ul>
+            </article>
+            <article id="soft-skills">
+                <h2>{{getText('softSkillsTitle')}}</h2>
+                <ul>
+                    <li v-for="skill in softSkills" class="soft-skill-step">
+                        {{ isSpanish() ? skill[0] : skill[1] }}
+                    </li>
+                </ul>
+            </article>
+        </section>
+        <section id="experience" :class="{ dark: theme==='dark' }">
+            <h2>{{getText('experienceTitle')}}</h2>
+            <a v-for="project in experienceCards" class="project-card" v-bind:href="project.link" target="_blank">
+                <div>
+                    <h4>{{project.title}}</h4>
+                    <p>{{project.place}}</p>
+                    <p>{{ isSpanish() ? project.year[0] : project.year[1] }}</p>
+                    <p>{{ isSpanish() ? project.description[0] : project.description[1] }}</p>
+                    <ul><li v-for="tool in project.tools">{{tool}}</li></ul>
+                </div>
+                <img v-bind:src="project.img" v-bind:alt="project.title"/>
+            </a>
+            <h3>{{getText('projectsTitle')}}</h3>
+            <a v-for="project in projectsCardsVisible" class="project-card" v-bind:href="project.link" target="_blank">
+                <div>
+                    <h4>{{project.title}}</h4>
+                    <ul><li v-for="tool in project.tools">{{tool}}</li></ul>
+                </div>
+                <img v-bind:src="project.img" v-bind:alt="project.title"/>
+            </a>
+            <div>
+               <button v-on:click="()=>seeMore=!seeMore" class="simple-btn" :class="{ dark: theme==='dark' }">
+                    {{seeMore ? getText('seeLessText') : getText('seeMoreText')}}
+                </button> 
+            </div>
+            <a v-for="project in projectsCardsNotVisible" class="project-card" :class="{ hidden: !seeMore }" v-bind:href="project.link" target="_blank">
+                <div>
+                    <h4>{{project.title}}</h4>
+                    <ul><li v-for="tool in project.tools">{{tool}}</li></ul>
+                </div>
+                
+                <img v-bind:src="project.img" v-bind:alt="project.title"/>
+            </a>
+        </section>
+        <footer>
+            <ul>
+                <li>
+                    <img src="./assets/icons/linkedin.png" alt="linkedin icon"/>
+                    <a href="https://www.linkedin.com/in/berny-orozco" target="_blank">www.linkedin.com/in/berny-orozco</a>
+                </li>
+                <li>
+                    <img src="./assets/icons/gmail.png" alt="linkedin icon"/>
+                    <a href= "mailto: baorozcoc@unal.edu.co" target="_blank"> baorozcoc@unal.edu.co</a>
+                </li>
+            </ul>
+        </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script>
+        const app=new Vue({
+            el:'#app',
+            data:{
+                languaje: 'english',
+                theme: 'dark',
+
+                //About me section
+                iam:['Hola, soy...','Hello, I am...'],
+                description:[
+                    "Un apasionado desarrollador de Software y Frontend con conocimientos en distintos marcos, pruebas unitarias, diseño responsivo, SEO y buenas prácticas. Creo en el poder del diseño y la tecnología para resolver problemas complejos y me esfuerzo por crear soluciones que no sólo sean funcionales sino también estéticamente agradables.",
+                     "A passionate Software and Web Frontend Developer with knowledge in various frameworks, unit testing, responsive design, SEO and best practices. I believe in the power of design and technology to solve complex problems and strive to create solutions that are not only functional but also aesthetically pleasing."
+                ],
+                cvButton: ['Descargar hoja de vida', 'Download CV'],
+
+                //Knowledge section
+                technicalTitle:['Conocimientos técnicos','Technical knowledge'],
+                technicalSkills:[
+                    ['HTML','./assets/icons/html-5.png'],
+                    ['CSS','./assets/icons/css-3.png'],
+                    ['SCSS','./assets/icons/scss.png'],
+                    ['Javascript','./assets/icons/js.png'],
+                    ['Typescript','./assets/icons/ts.png'],
+                    ['Angular','./assets/icons/angular.png'],
+                    ['Git','./assets/icons/git.png'],
+                    ['React','./assets/icons/react.png'],
+                    ['Nextjs','./assets/icons/next.png'],
+                    ['Vuejs','./assets/icons/vue.webp'],
+                    ['Jasmine','./assets/icons/jasmine.webp']
+                ],
+
+                educationTitle:['Formación','Education'],
+                educationSteps:[
+                    {
+                        title:['Ingeniero de Sistemas y Computación','Systems Engineering'],
+                        place: 'Universidad Nacional de Colombia',
+                        year: ['Agosto 2017 - Junio 2023','August 2017 - June 2023']
+                    },
+                    {
+                        title:['Técnico en diseño gráfico','Technician in graphic design'],
+                        place: 'Instituto Británico',
+                        year: ['Enero 2016 - Junio 2017','January 2016 - June 2017']
+                    }
+                ],
+
+                softSkillsTitle:['Habilidades blandas','Soft Skills'],
+                softSkills:[
+                    ['Gestión del tiempo','Time management'],
+                    ['Gestión del estrés','Stress management'],
+                    ['Resiliencia','Resilience'],
+                    ['Trabajo en equipo','Teamwork'],
+                    ['Pensamiento crítico','Critical thinking'],
+                    ['Positivismo','Positivism'],
+                ],
+
+                //Experience section
+                experienceTitle:['Experiencia profesional','Experience'],
+                experienceCards:[
+                    {
+                        title: 'Teclogi & Loggiapp',
+                        place: "Teclogi",
+                        year: ['Enero 2023 - Actualidad','January 2023 - Now'],
+                        description: ["Desarrollador Angular", "Angular Developer"],
+                        tools: ['HTML','SCSS','Typescript','Angular'],
+                        link: 'https://www.teclogi.com/#/home',
+                        img: './assets/sites/teclogi.gif'
+                    },
+                    {
+                        title: 'Quanticon Valley',
+                        place: "Universidad Nacional de Colombia",
+                        year: ['Enero 2023 - Junio 2023','January 2023 - June 2023'],
+                        description: ["Estudiante auxiliar - Desarrollador Nextjs", "Assistant Student - Nextjs Developer"],
+                        tools: ['HTML','CSS','Javascript','Nextjs'],
+                        link: 'https://www.quanticonvalley.com',
+                        img: './assets/sites/quanticonvalley.jpg'
+                    },
+                ],
+                projectsTitle: ['Proyectos personales','Own projects'],
+                projectsCardsVisible: [
+                    {
+                        title: 'Multiclock',
+                        tools: ['HTML','CSS','Javascript','React'],
+                        link: 'https://multi-clock.vercel.app',
+                        img: './assets/sites/multiclock.gif'
+                    },
+                    {
+                        title: 'Whatsapp direct messages',
+                        tools: ['HTML','CSS','Javascript','Vuejs'],
+                        link: 'https://directmessagewpp.vercel.app',
+                        img: './assets/sites/wppdirectmessages.gif'
+                    },
+                    {
+                        title: 'To do list v2',
+                        tools: ['HTML','CSS','Javascript','React'],
+                        link: 'https://new-todo-list-vert.vercel.app',
+                        img: './assets/sites/newtodolist.gif'
+                    }
+                ],
+                seeMore: false,
+                seeMoreText: ['Ver más','See more'],
+                seeLessText: ['Ver menos','See less'],
+                projectsCardsNotVisible: [
+                    {
+                        title: 'Notepad online',
+                        tools: ['HTML','CSS','Javascript','Vuejs'],
+                        link: 'https://bloc-de-notas-baorozcoc.vercel.app',
+                        img: './assets/sites/bloconline.gif'
+                    },
+                    {
+                        title: 'To do list v1',
+                        tools: ['HTML','CSS','Javascript','React'],
+                        link: 'https://you-do-i-list.vercel.app',
+                        img: './assets/sites/youdoilist.gif'
+                    }
+                ],
+            },
+            methods:{
+                changeTheme(){
+                     this.theme = this.theme==="dark"? "light": "dark";
+                },
+                changeLang(){
+                     this.languaje = this.languaje==="spanish"? "english": "spanish";
+                },
+                downloadCV(){
+                    const aElement = document.createElement('a');
+                    aElement.href = this.isSpanish()? './assets/Berny Alejandro Orozco Córdoba Hoja de vida.pdf' : './assets/Berny Alejandro Orozco Córdoba CV.pdf';
+                    aElement.target = '_blank';
+                    aElement.click();
+                },
+                getText(attribute){
+                    return this.languaje==="spanish"? this[attribute][0] : this[attribute][1];
+                },
+                isSpanish(){
+                    return this.languaje==="spanish";
+                }
+            }
+        })
+    </script>
+</body>
+</html>
